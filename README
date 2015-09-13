@@ -49,10 +49,11 @@ pid_t popen2io(const char *_file, const char *_argv[],
 All the functions use execvp(3) to replace the forked child process image with
 the new process image constructed from the _file launched with argument list
 _argv[]. The flags specified by _oflags described in pipe(2) can be set for
-created pipes. On success the PID of the created child process is returned.  On
-failure, -1 is returned to the caller, no child process is created, errno is
-set to indicate the cause of the error. See the library header file popen2.h
-for more description.
+created pipes. On success the PID of the created child process is returned.
+On failure, -1 is returned to the caller, no child process is created, errno is
+set to indicate the cause of the error.
+
+See the library header file src/include/popen2.h for more information.
 
 
 USAGE EXAMPLES
@@ -81,7 +82,7 @@ See test/example1.cpp for the full source code.
 
 
 Example for the following shell pipeline:
-    cat </dev/urandom | tr -c '[:alnum:]\\n' . | head -n 1
+    cat </dev/urandom | tr -c '[:alnum:]\n' . | head -n 1
 
 
   #include "popen2.h"
@@ -145,4 +146,7 @@ or with all in one command:
 All build results are created in the corresponding subdirectory of the ./build
 folder from the root directory of the project. The name of the subdirectory is
 derived from the make goal name.
+
+Library header files are located in
+    src/include/
 
