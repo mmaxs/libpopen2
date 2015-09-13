@@ -1,0 +1,57 @@
+# vim: ft=make
+# generic makefile framework
+# Copyright (c) 2015 Mikhail Usenko <michaelus@tochka.ru>
+
+
+# don't try to rebuild this makefile
+$(lastword $(MAKEFILE_LIST)): ;
+
+
+# $. (line feed - new line)
+define .
+
+
+endef
+
+
+# !
+define !
+$(patsubst $(ROOT)/%,$(BUILD_ROOT)/%,$(dir $(filter /%,$(1)) $(addprefix $(CURDIR)/,$(filter-out /%,$(1)))))
+endef
+
+
+# !!
+define !!
+$(join $(call !,$(1)),$(notdir $(1)))
+endef
+
+
+# filtered sources
+define _SRCS
+$(filter %$(1),$(strip $(2)))
+endef
+
+
+# object files
+define _OBJS
+$(patsubst %$(1),%.o,$(call _SRCS,$(1),$(2)))
+endef
+
+
+# object dependencies
+define _DEPS
+$(patsubst %.o:,$.%.o:,$(subst \,,$(shell $(CXX) $(CXXSTD) $(CPPFLAGS) $(IFLAGS) -MM $(1) $(addprefix -MT ,$(2)))))
+endef
+
+
+# library files
+define _LIBS
+$(join $(dir $(2)),$(patsubst %,$(1),$(notdir $(2))))
+endef
+
+
+# pattern for linker output
+define LDOUT ?=
+$@
+endef
+

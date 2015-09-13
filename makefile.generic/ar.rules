@@ -1,0 +1,48 @@
+# vim: ft=make
+# generic makefile framework
+# Copyright (c) 2015 Mikhail Usenko <michaelus@tochka.ru>
+
+
+# don't try to rebuild this makefile
+$(lastword $(MAKEFILE_LIST)): ;
+
+
+include $(ROOT)/makefile.generic/common.defs
+
+
+# no default goal
+.DEFAULT_GOAL = .
+
+
+# object files (adjusted to build paths)
+object-files = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
+
+
+# rules to create/update an archive
+%: $(object-files) | $(call !!,$(CURDIR))
+	$(info $. *** ($@: $^))
+	$(AR) $(ARFLAGS) $(call !!,$(call _LIBS,lib%.a,$@)) $^
+
+
+# build subdirectory
+$(call !!,$(CURDIR)):
+	mkdir $@
+
+
+# warning on fallback to the predefined implicit rules (if target file does not exist yet)
+(%): % ; $(warning Implicit rule ($@: $^) discarded.)
+
+
+# reject all other goals
+%: ; $(warning Avoid target '$@'.)
+
+
+# summary of the predefined implicit rules
+
+# AR = ar
+# ARFLAGS = rv
+# %.a:
+# (%): %
+#         $(AR) $(ARFLAGS) $@ $<
+# .a:
+

@@ -1,0 +1,80 @@
+# vim: ft=make
+# generic makefile framework
+# Copyright (c) 2015 Mikhail Usenko <michaelus@tochka.ru>
+
+
+# don't try to rebuild this makefile
+$(lastword $(MAKEFILE_LIST)): ;
+
+
+include $(ROOT)/makefile.generic/common.defs
+
+
+# no default goal
+.DEFAULT_GOAL = .
+
+
+# object files (adjusted to build paths)
+object-files = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
+
+
+# rules for linking and producing an executable or shared library
+%: source-file = $(if $(wildcard $*$(CXX_FILE_SUFFIX)),$*$(CXX_FILE_SUFFIX))
+%: object-file = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(source-file)))
+%: link-parts = $(if $(findstring $(object-file),$(object-files)),,$(source-file)) $(object-files)
+%: $(source-file) $(object-files) $(MAKEFILE_LIST) | $(call !!,$(CURDIR))
+	$(info $. *** ($@: $^))
+	$(LINK.cc) $(LDSTATIC) $(link-parts) $(LDLIBS)  -o $(call !!,$(LDOUT))
+
+
+# build subdirectory
+$(call !!,$(CURDIR)):
+	mkdir $@
+
+
+# warning on fallback to the predefined implicit rules (if target file does not exist yet)
+%: %$(CXX_FILE_SUFFIX) ; $(warning Implicit rule ($@: $^) discarded.)
+
+
+# reject all other goals
+%: ; $(warning Avoid target '$@'.)
+
+
+# summary of the predefined implicit rules
+
+# LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# %.cc:
+# %: %.cc
+#         $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# %.o: %.cc
+#         $(COMPILE.cc) $(OUTPUT_OPTION) $<
+# .cc:
+#         $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# .cc.o:
+#         $(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+# LINK.cpp = $(LINK.cc)
+# COMPILE.cpp = $(COMPILE.cc)
+# %.cpp:
+# %: %.cpp
+#         $(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# %.o: %.cpp
+#         $(COMPILE.cpp) $(OUTPUT_OPTION) $<
+# .cpp:
+#         $(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# .cpp.o:
+#         $(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+# LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+# COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+# %.c:
+# %: %.c
+#         $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# %.o: %.c
+#         $(COMPILE.c) $(OUTPUT_OPTION) $<
+# .c:
+#         $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# .c.o:
+#         $(COMPILE.c) $(OUTPUT_OPTION) $<
+

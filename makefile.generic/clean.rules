@@ -1,0 +1,25 @@
+# vim: ft=make
+# generic makefile framework
+# Copyright (c) 2015 Mikhail Usenko <michaelus@tochka.ru>
+
+
+# don't try to rebuild this makefile
+$(lastword $(MAKEFILE_LIST)): ;
+
+
+include $(ROOT)/makefile.generic/common.defs
+
+
+# no default goal
+.DEFAULT_GOAL = .
+
+
+.PHONY: clean
+clean:
+	$(info $. *** ($@: $^))
+	rm -rf $(call !!,$(CURDIR))/*
+
+
+# reject all other goals
+%: ; $(warning Avoid target '$@'.)
+

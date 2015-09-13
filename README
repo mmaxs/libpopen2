@@ -1,0 +1,148 @@
+
+LIBPOPEN2
+---------
+
+libpopen2 is a library that provides 4 functions to programmatically create
+unix shell pipelines in C/C++ code. Technically the library is written in C++
+because it uses a small helper class encapsulating the most frequent operations
+with file descriptors that makes internal code more clean and straightforward,
+but library functions itself have C language linkage so it can be used as a
+module side by side with C code.
+
+
+FUNCTION DESCRIPTION
+--------------------
+
+pid_t popen2(const char *_file, const char *_argv[],
+             int *_rd, int *_wr,
+             const int _oflags = 0);
+
+    launches a child process by forking and executing the _file with command
+    line parameter list _argv[], opens the pipes to child's process stdin and
+    from its stdout;
+
+pid_t popen2i(const char *_file, const char *_argv[],
+              const int _in, int *_rd,
+              const int _oflags = 0);
+              
+    launches a child process by forking and executing the _file with command
+    line parameter list _argv[], duplicates the file descriptor referring by
+    the number _in to child's process stdin, opens the pipe from child's
+    process stdout;
+
+pid_t popen2o(const char *_file, const char *_argv[],
+              const int _out, int *_wr,
+              const int _oflags = 0);
+              
+    launches a child process by forking and executing the _file with command
+    line parameter list _argv[], duplicates the file descriptor referring by
+    the number _out to child's process stdout, opens the pipe to child's
+    process stdin;
+
+pid_t popen2io(const char *_file, const char *_argv[],
+               const int _in, const int _out);
+               
+    launches a child process by forking and executing the _file with command
+    line parameter list _argv[], duplicates the file descriptors referring by
+    the numbers _in and _out to child's process stdin and stdout respectively;
+
+All the functions use execvp(3) to replace the forked child process image with
+the new process image constructed from the _file launched with argument list
+_argv[]. The flags specified by _oflags described in pipe(2) can be set for
+created pipes. On success the PID of the created child process is returned.  On
+failure, -1 is returned to the caller, no child process is created, errno is
+set to indicate the cause of the error. See the library header file popen2.h
+for more description.
+
+
+USAGE EXAMPLES
+--------------
+
+Here is the example how the shell pipeline
+    cat /etc/passwd | grep root
+can be created:
+
+
+  #include "popen2.h"
+  ...
+
+  const char* prog1[] = { "cat", "/etc/passwd", 0 };
+  const char* prog2[] = { "grep", "root", 0 };
+
+  int rd = -1;
+
+  popen2i(prog1[0], prog1, 0, &rd);
+  popen2io(prog2[0], prog2, rd, 1);
+  
+  close(rd);
+  ...
+
+See test/example1.cpp for the full source code.
+
+
+Example for the following shell pipeline:
+    cat </dev/urandom | tr -c '[:alnum:]\\n' . | head -n 1
+
+
+  #include "popen2.h"
+  ...
+
+  const char* prog1[] = { "cat", 0 };
+  const char* prog2[] = { "tr", "-c", "'[:alnum:]\\n'", ".", 0 };
+  const char* prog3[] = { "head", "-n", "1", 0 };
+
+  int rd1 = -1, rd2 = -1;
+  
+  int urandom = open("/dev/urandom", O_RDONLY);
+
+  popen2i(prog1[0], prog1, urandom, &rd1;
+  popen2i(prog2[0], prog2, rd1, &rd2);
+  popen2io(prog3[0], prog3, rd2, 1);
+
+  // close all descriptors intended for child processes so the prog3 completion
+  // results in terminating all of the parts of the pipeline
+  close(rd2); close(rd1); close(urandom);
+  ...
+
+See test/example3.cpp for the full source code.
+
+
+Also look at test/example3.cpp source code to get in details about
+pipeline creating and working.
+
+
+COMPILING
+---------
+
+The project uses a generic makefile framework that utilizes make pattern rules
+and allows fairly flexible make goals to be given to get the resulting binary
+files.
+
+Type
+    make lib/LIBRARY_BASE_NAME
+to build the library.
+For instance if you want the library file got the name libpo2 type
+
+    make lib/po2
+
+to get the binary file of the shared module libpo2.so and the library archive
+libpo2.a for static linking.
+
+To build the examples herein above mentioned and the "Hello, libpopen2!" example
+type
+    make test/SOURCE_FILE_BASE_NAME
+E.g. type
+
+    make test/example1
+    make test/example2
+    make test/example3
+    make test/hello1
+
+or with all in one command:
+
+    make test/example{1,2,3} test/hello1
+
+All build results are created in the corresponding subdirectory of the ./build
+folder from the root directory of the project. The name of the subdirectory is
+derived from the make goal name.
+

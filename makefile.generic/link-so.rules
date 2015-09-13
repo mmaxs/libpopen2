@@ -1,0 +1,15 @@
+# vim: ft=make
+# generic makefile framework
+# Copyright (c) 2015 Mikhail Usenko <michaelus@tochka.ru>
+
+
+# don't try to rebuild this makefile
+$(lastword $(MAKEFILE_LIST)): ;
+
+
+LDFLAGS += -shared
+LDOUT = $(call _LIBS,lib%.so,$@)
+
+
+include $(ROOT)/makefile.generic/link.rules
+
