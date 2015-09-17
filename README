@@ -96,7 +96,7 @@ Example for the following shell pipeline:
   
   int urandom = open("/dev/urandom", O_RDONLY);
 
-  popen2i(prog1[0], prog1, urandom, &rd1;
+  popen2i(prog1[0], prog1, urandom, &rd1);
   popen2i(prog2[0], prog2, rd1, &rd2);
   popen2io(prog3[0], prog3, rd2, 1);
 
@@ -105,7 +105,7 @@ Example for the following shell pipeline:
   close(rd2); close(rd1); close(urandom);
   ...
 
-See test/example3.cpp for the full source code.
+See test/example2.cpp for the full source code.
 
 
 Also look at test/example3.cpp source code to get in details about
