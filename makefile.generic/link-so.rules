@@ -7,8 +7,11 @@
 $(lastword $(MAKEFILE_LIST)): ;
 
 
-LDFLAGS += -shared
 LDOUT = $(call _LIBS,lib%.so,$@)
+ld-out = $(LDOUT)$(if $(SOFILE_VERSION),.$(SOFILE_VERSION))
+
+ld-soname = -Wl,-soname=$(notdir $(LDOUT)).$(SONAME_VERSION)
+LDFLAGS += -shared $(if $(SONAME_VERSION),$(ld-soname))
 
 
 include $(ROOT)/makefile.generic/link.rules

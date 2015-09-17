@@ -49,9 +49,3 @@ define _LIBS
 $(join $(dir $(2)),$(patsubst %,$(1),$(notdir $(2))))
 endef
 
-
-# pattern for linker output
-define LDOUT ?=
-$@
-endef
-
