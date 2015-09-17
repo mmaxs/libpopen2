@@ -6,8 +6,8 @@ libpopen2 is a library that provides 4 functions to programmatically create
 unix shell pipelines in C/C++ code. Technically the library is written in C++
 because it uses a small helper class encapsulating the most frequent operations
 with file descriptors that makes internal code more clean and straightforward,
-but library functions itself have C language linkage so it can be used as a
-module side by side with C code.
+but library functions itself have C language linkage so the library can be used
+as a module side by side with C code.
 
 
 FUNCTION DESCRIPTION
@@ -89,7 +89,7 @@ Example for the following shell pipeline:
   ...
 
   const char* prog1[] = { "cat", 0 };
-  const char* prog2[] = { "tr", "-c", "'[:alnum:]\\n'", ".", 0 };
+  const char* prog2[] = { "tr", "-c", "[:alnum:]\\n", ".", 0 };
   const char* prog3[] = { "head", "-n", "1", 0 };
 
   int rd1 = -1, rd2 = -1;

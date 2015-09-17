@@ -14,7 +14,7 @@ int main(int _argc, char *const _argv[])
   printf("%s\n", "cat </dev/urandom | tr -c '[:alnum:]\\n' . | head -n 1");
 
   const char* prog1[] = { "cat", 0 };
-  const char* prog2[] = { "tr", "-c", "'[:alnum:]\\n'", ".", 0 };
+  const char* prog2[] = { "tr", "-c", "[:alnum:]\\n", ".", 0 };
   const char* prog3[] = { "head", "-n", "1", 0 };
 
   int rd1 = -1, rd2 = -1;
