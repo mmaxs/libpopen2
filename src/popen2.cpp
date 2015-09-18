@@ -4,11 +4,58 @@
 
 #include "popen2.h"
 #include "fd.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <dirent.h>
 
 
 static void close_all_fds(const int *_exclude = nullptr)
 {
-  // TODO ...
+  int n = -1;
+  if ((n = ::snprintf(nullptr, 0, "/proc/%d/fd", ::getpid())) > 0)
+  {
+    char *p = 0;
+    if ((p = new char[n+1]) != 0)
+    {
+      ::snprintf(p, n+1, "/proc/%d/fd", ::getpid());
+      DIR *d = ::opendir(p);
+      delete p;
+
+      if (d)
+      {
+        struct dirent *e = 0;
+        while ((e = ::readdir(d)) != 0)
+        {
+          if (e->d_name[0] == '.')  continue;
+
+          int fd = 0;
+
+          char *s = e->d_name;
+          for (char c; *s; ++s)
+          {
+            c = *s - '0';
+            if ((c < 0) || (9 < c))  break;
+            fd = 10*fd + c;
+          };
+          if (s == e->d_name or *s)  continue;
+
+          if (fd == ::dirfd(d))  continue;
+
+          if (_exclude)
+          {
+            const int *x = _exclude;
+            while (*x != -1 and *x != fd) ++x;
+            if (*x != -1)  continue;
+          };
+
+          ::close(fd);
+        };
+
+        ::closedir(d);
+        return;
+      };
+    };
+  };
 }
 
 
