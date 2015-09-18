@@ -19,7 +19,7 @@ object-files = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
 
 
 # rules for linking and producing an executable or a shared library
-%: ld-out ?= $(if $(LDOUT),$(LDOUT),$@)
+ld-out ?= $(if $(LDOUT),$(LDOUT),$@)
 %: source-file = $(if $(wildcard $*$(CXX_FILE_SUFFIX)),$*$(CXX_FILE_SUFFIX))
 %: object-file = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(source-file)))
 %: link-parts = $(if $(findstring $(object-file),$(object-files)),,$(source-file)) $(object-files)
