@@ -4,59 +4,6 @@
 
 #include "popen2.h"
 #include "fd.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <dirent.h>
-
-
-static void close_all_fds(const int *_exclude = nullptr)
-{
-  int n = -1;
-  if ((n = ::snprintf(nullptr, 0, "/proc/%d/fd", ::getpid())) > 0)
-  {
-    char *p = 0;
-    if ((p = new char[n+1]) != 0)
-    {
-      ::snprintf(p, n+1, "/proc/%d/fd", ::getpid());
-      DIR *d = ::opendir(p);
-      delete p;
-
-      if (d)
-      {
-        struct dirent *e = 0;
-        while ((e = ::readdir(d)) != 0)
-        {
-          if (e->d_name[0] == '.')  continue;
-
-          int fd = 0;
-
-          char *s = e->d_name;
-          for (char c; *s; ++s)
-          {
-            c = *s - '0';
-            if ((c < 0) || (9 < c))  break;
-            fd = 10*fd + c;
-          };
-          if (s == e->d_name or *s)  continue;
-
-          if (fd == ::dirfd(d))  continue;
-
-          if (_exclude)
-          {
-            const int *x = _exclude;
-            while (*x != -1 and *x != fd) ++x;
-            if (*x != -1)  continue;
-          };
-
-          ::close(fd);
-        };
-
-        ::closedir(d);
-        return;
-      };
-    };
-  };
-}
 
 
 pid_t popen2(const char *_file, const char *_argv[], int *_rd, int *_wr, const int _oflags)
@@ -93,7 +40,7 @@ pid_t popen2(const char *_file, const char *_argv[], int *_rd, int *_wr, const i
                 if (upstream_.wr.mov2(1) == -1)  goto quit_child__;
 
                 int x[] = { 0, 1, 2, child_status.wr, -1 };
-                close_all_fds(x);
+                fd::close_all(x);
                 
                 execvp(_file, const_cast< char* const* >(_argv));
               }
@@ -155,7 +102,7 @@ pid_t popen2i(const char *_file, const char *_argv[], const int _in, int *_rd, c
                 if (upstream_.wr.mov2(1) == -1)  goto quit_child__;
 
                 int x[] = { 0, 1, 2, child_status.wr, -1 };
-                close_all_fds(x);
+                fd::close_all(x);
                 
                 execvp(_file, const_cast< char* const* >(_argv));
               }
@@ -217,7 +164,7 @@ pid_t popen2o(const char *_file, const char *_argv[], const int _out, int *_wr, 
                 if (out_ == 1)  out_.unsetfd(FD_CLOEXEC); else  if (out_.mov2(1) == -1)  goto quit_child__;
 
                 int x[] = { 0, 1, 2, child_status.wr, -1 };
-                close_all_fds(x);
+                fd::close_all(x);
                 
                 execvp(_file, const_cast< char* const* >(_argv));
               }
@@ -274,7 +221,7 @@ pid_t popen2io(const char *_file, const char *_argv[], const int _in, const int 
                 if (out_ == 1)  out_.unsetfd(FD_CLOEXEC); else  if (out_.mov2(1) == -1)  goto quit_child__;
 
                 int x[] = { 0, 1, 2, child_status.wr, -1 };
-                close_all_fds(x);
+                fd::close_all(x);
                 
                 execvp(_file, const_cast< char* const* >(_argv));
               }

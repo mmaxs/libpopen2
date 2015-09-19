@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdio.h>
+#include <dirent.h>
 
 
 /* a small class wrapping the most frequent operations with file descriptors
@@ -111,6 +113,57 @@ public:
   int unsetfd(const int _flags)  { return ::fcntl(n_, F_SETFD, ::fcntl(n_, F_GETFD) & ~_flags); }
   int setfl(const int _flags)  { return ::fcntl(n_, F_SETFL, ::fcntl(n_, F_GETFL) | _flags); }
   int unsetfl(const int _flags)  { return ::fcntl(n_, F_SETFL, ::fcntl(n_, F_GETFL) & ~_flags); }
+
+public:
+  static void close_all(const int *_except = nullptr)
+  {
+    int n = -1;
+    if ((n = ::snprintf(nullptr, 0, "/proc/%d/fd", ::getpid())) > 0)
+    {
+      char *p = 0;
+      if ((p = new char[n+1]) != 0)
+      {
+        ::snprintf(p, n+1, "/proc/%d/fd", ::getpid());
+        DIR *d = ::opendir(p);
+        delete p;
+
+        if (d)
+        {
+          struct dirent *e = 0;
+          while ((e = ::readdir(d)) != 0)
+          {
+            if (e->d_name[0] == '.')  continue;
+
+            int fd = 0;
+
+            char *s = e->d_name;
+            for (char c; *s; ++s)
+            {
+              c = *s - '0';
+              if ((c < 0) || (9 < c))  break;
+              fd = 10*fd + c;
+            };
+            if (s == e->d_name or *s)  continue;
+
+            if (fd == ::dirfd(d))  continue;
+
+            if (_except)
+            {
+              const int *x = _except;
+              while (*x != -1 and *x != fd) ++x;
+              if (*x != -1)  continue;
+            };
+
+            ::close(fd);
+          };
+
+          ::closedir(d);
+          return;
+        };
+      };
+    };
+  }
+
 };
 
 
