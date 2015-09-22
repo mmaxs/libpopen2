@@ -18,6 +18,9 @@ endef
 define !
 $(patsubst $(ROOT)/%,$(BUILD_ROOT)/%,$(dir $(filter /%,$(1)) $(addprefix $(CURDIR)/,$(filter-out /%,$(1)))))
 endef
+#define !
+#$(patsubst $(abspath $(ROOT))/%,$(abspath $(BUILD_ROOT))/%,$(addsuffix /,$(abspath $(dir $(filter /%,$(1)) $(addprefix $(CURDIR)/,$(filter-out /%,$(1)))))))
+#endef
 
 
 # !!

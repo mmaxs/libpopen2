@@ -30,7 +30,7 @@ ld-out ?= $(if $(LDOUT),$(LDOUT),$@)
 
 # build subdirectory
 $(call !!,$(CURDIR)):
-	mkdir $@
+	mkdir -p $@
 
 
 # warning on fallback to the predefined implicit rules (if target file does not exist yet)

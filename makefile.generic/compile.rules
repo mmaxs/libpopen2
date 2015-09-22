@@ -31,7 +31,7 @@ object-dependencies = $(foreach file,$(sources),$(call _DEPS,$(file),$(call !!,$
 
 # ... their build subdirectories, ...
 $(dir $(object-files)):
-	mkdir $@
+	mkdir -p $@
 
 
 # ... rules for prerequisites, ...
