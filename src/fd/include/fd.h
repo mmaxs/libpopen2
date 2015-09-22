@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <new>
 
 
 /* a small class wrapping the most frequent operations with file descriptors
@@ -121,7 +122,7 @@ public:
     if ((n = ::snprintf(nullptr, 0, "/proc/%d/fd", ::getpid())) > 0)
     {
       char *p = 0;
-      if ((p = new char[n+1]) != 0)
+      if ((p = new(std::nothrow) char[n+1]) != 0)
       {
         ::snprintf(p, n+1, "/proc/%d/fd", ::getpid());
         DIR *d = ::opendir(p);
@@ -137,20 +138,21 @@ public:
             int fd = 0;
 
             char *s = e->d_name;
+            if (!*s)  continue;
             for (char c; *s; ++s)
             {
               c = *s - '0';
               if ((c < 0) || (9 < c))  break;
               fd = 10*fd + c;
             };
-            if (s == e->d_name or *s)  continue;
+            if (*s)  continue;
 
             if (fd == ::dirfd(d))  continue;
 
             if (_except)
             {
               const int *x = _except;
-              while (*x != -1 and *x != fd) ++x;
+              while (*x != -1 and *x != fd)  ++x;
               if (*x != -1)  continue;
             };
 
