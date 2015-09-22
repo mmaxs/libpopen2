@@ -152,8 +152,8 @@ public:
             if (_except)
             {
               const int *x = _except;
-              while (*x != -1 and *x != fd)  ++x;
-              if (*x != -1)  continue;
+              while (*x >= 0 and *x != fd)  ++x;
+              if (*x >= 0)  continue;
             };
 
             ::close(fd);
@@ -164,6 +164,19 @@ public:
         };
       };
     };
+
+    // fall back
+    for (int fd = 0, m = ::sysconf(_SC_OPEN_MAX); fd < m; ++fd)
+    {
+      if (_except)
+      {
+        const int *x = _except;
+        while (*x >= 0 and *x != fd)  ++x;
+        if (*x >= 0)  continue;
+      };
+      ::close(fd);
+    };
+
   }
 
 };

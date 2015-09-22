@@ -54,7 +54,7 @@ int main(int _argc, char* const _argv[])
   ls(fileno(stderr), p.c_str());
   getchar();
 
-  int x[] = { 0, 2, rd, -1 };
+  int x[] = { 0, 2, wr, -1 };
   fd::close_all(x);
 
   ls(fileno(stderr), p.c_str());
