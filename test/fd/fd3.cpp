@@ -24,7 +24,7 @@ void ls(const int _out, const char* const  _p)
 {
   if (!_p)  return;
 
-  const char* cmd[] = { "ls",  "-AFl", "--time-style=long-iso", "--color=tty", _p, 0 };
+  const char* cmd[] = { "ls", "-AFl", "--time-style=long-iso", "--color=auto", _p, 0 };
   popen2io(cmd[0], cmd, 0, _out);
 }
 
