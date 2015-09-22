@@ -28,7 +28,7 @@ $(libpopen2):
 clean:
 	$(MAKE) -f $(ROOT)/makefile.generic/clean.rules $@
 	# clean parts related to additional sources
-	$(MAKE) -C $(ROOT)/lib -f $(ROOT)/makefile.generic/clean.rules $@
+	$(MAKE) -C $(ROOT) lib/$@
 
 
 # use generic rules for all other targets
