@@ -15,18 +15,22 @@ include $(ROOT)/makefile.generic/common.defs
 
 
 # object files (adjusted to build paths)
-object-files = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
+{object-files} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
+
+
+# build subdirectory being supposed
+{build-dir} = $(call !!,$(CURDIR))
 
 
 # rules to create/update an archive
-%: $(object-files) | $(call !!,$(CURDIR))
+%: $({object-files}) | $({build-dir})/
 	$(info $. *** ($@: $^))
 	$(AR) $(ARFLAGS) $(call !!,$(call _LIBS,lib%.a,$@)) $^
 
 
 # build subdirectory
-$(call !!,$(CURDIR)):
-	mkdir $@
+$({build-dir})/:
+	mkdir -p $@
 
 
 # warning on fallback to the predefined implicit rules (if target file does not exist yet)

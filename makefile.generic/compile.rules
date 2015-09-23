@@ -15,33 +15,33 @@ include $(ROOT)/makefile.generic/common.defs
 
 
 # sources, ...
-sources = $(call _SRCS,$(CXX_FILE_SUFFIX),$(SOURCES))
+{sources} = $(call _SRCS,$(CXX_FILE_SUFFIX),$(SOURCES))
 
 
-ifneq ($(sources),)
+ifneq ($({sources}),)
 
 
 # ... their corresponding object files (adjusted to build paths), ...
-object-files = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
+{object-files} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
 
 
 # ... their dependencies (with build subdirectory dependencies), ...
-object-dependencies = $(foreach file,$(sources),$(call _DEPS,$(file),$(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(file)))) | $(call !,$(file)))
+{object-dependencies} = $(foreach {file},$({sources}),$(call _DEPS,$({file}),$(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$({file})))) | $(call !,$({file})))
 
 
 # ... their build subdirectories, ...
-$(dir $(object-files)):
+$(dir $({object-files})):
 	mkdir -p $@
 
 
 # ... rules for prerequisites, ...
-$(eval $(object-dependencies))
+$(eval $({object-dependencies}))
 
 
 # ... and rules for compiling
-$(object-files): $(MAKEFILE_LIST)
-$(object-files): compile-parts = $(filter-out %$(CXX_HEADER_SUFFIX) $(MAKEFILE_LIST),$^)
-$(object-files):
+$({object-files}): $(MAKEFILE_LIST)
+$({object-files}): compile-parts = $(filter-out %$(CXX_HEADER_SUFFIX) $(MAKEFILE_LIST),$^)
+$({object-files}):
 	$(info $. *** ($@: $^))
 	$(COMPILE.cc) $(CXXSTD) $(IFLAGS) $(compile-parts)  -o $@
 
@@ -50,8 +50,8 @@ endif
 
 
 # do compile the object files
-ifneq ($(object-files),)
-%: $(object-files) ;
+ifneq ($({object-files}),)
+%: $({object-files}) ;
 endif
 
 
