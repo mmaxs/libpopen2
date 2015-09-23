@@ -29,16 +29,20 @@ include $(ROOT)/makefile.generic/common.defs
 
 # rules for linking and producing an executable or a shared library
 {ld-out} ?= $(if $(LDOUT),$(LDOUT),$@)
+%: {target-build-dir} = $(call !,$({ld-out}))
 %: {source-file} = $(if $(wildcard $*$(CXX_FILE_SUFFIX)),$*$(CXX_FILE_SUFFIX))
 %: {object-file} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$({source-file})))
 %: {link-parts} = $(if $(findstring $({object-file}),$({object-files})),,$({source-file})) $({object-files})
-%: $$({source-file}) $$({object-files}) $$(MAKEFILE_LIST) | $$({build-dir})/
+%: $$({source-file}) $$({object-files}) $$(MAKEFILE_LIST) | $$({target-build-dir})
 	$(info $. *** ($@: $^))
 	$(LINK.cc) $(LDSTATIC) $({link-parts}) $(LDLIBS)  -o $(call !!,$({ld-out}))
 
 
-# build subdirectory
+# default build subdirectory
 $({build-dir})/:
+	mkdir -p $@
+# if {target-build-dir} is not the same as {build-dir}, it is supposed to be under {build-dir}
+$({build-dir})/%:
 	mkdir -p $@
 
 

@@ -22,14 +22,23 @@ include $(ROOT)/makefile.generic/common.defs
 {build-dir} = $(call !!,$(CURDIR))
 
 
+# use secondary expansion to make target-specific and automatic variables
+# to be properly expanded in pattern rule prerequisites
+.SECONDEXPANSION:
+
+
 # rules to create/update an archive
-%: $({object-files}) | $({build-dir})/
+%: {target-build-dir} = $(call !,$@)
+%: $$({object-files}) | $$({target-build-dir})
 	$(info $. *** ($@: $^))
 	$(AR) $(ARFLAGS) $(call !!,$(call _LIBS,lib%.a,$@)) $^
 
 
-# build subdirectory
+# default build subdirectory
 $({build-dir})/:
+	mkdir -p $@
+# if {target-build-dir} is not the same as {build-dir}, it is supposed to be under {build-dir}
+$({build-dir})/%:
 	mkdir -p $@
 
 
