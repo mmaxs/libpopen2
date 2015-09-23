@@ -22,12 +22,17 @@ include $(ROOT)/makefile.generic/common.defs
 {build-dir} = $(call !!,$(CURDIR))
 
 
+# use secondary expansion to make target-specific and automatic variables
+# to be properly expanded in pattern rule prerequisites
+.SECONDEXPANSION:
+
+
 # rules for linking and producing an executable or a shared library
 {ld-out} ?= $(if $(LDOUT),$(LDOUT),$@)
 %: {source-file} = $(if $(wildcard $*$(CXX_FILE_SUFFIX)),$*$(CXX_FILE_SUFFIX))
 %: {object-file} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$({source-file})))
 %: {link-parts} = $(if $(findstring $({object-file}),$({object-files})),,$({source-file})) $({object-files})
-%: $({source-file}) $({object-files}) $(MAKEFILE_LIST) | $({build-dir})/
+%: $$({source-file}) $$({object-files}) $$(MAKEFILE_LIST) | $$({build-dir})/
 	$(info $. *** ($@: $^))
 	$(LINK.cc) $(LDSTATIC) $({link-parts}) $(LDLIBS)  -o $(call !!,$({ld-out}))
 
