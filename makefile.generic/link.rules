@@ -30,7 +30,10 @@ include $(ROOT)/makefile.generic/common.defs
 # rules for linking and producing an executable or a shared library
 {ld-out} ?= $(if $(LDOUT),$(LDOUT),$@)
 %: {target-build-dir} = $(call !,$({ld-out}))
-%: {source-file} = $(if $(wildcard $*$(CXX_FILE_SUFFIX)),$*$(CXX_FILE_SUFFIX))
+# using $@ instead of $* yields a more predictable result
+# as far as make's pattern matching is not obvious
+# http://www.gnu.org/software/make/manual/make.html#Pattern-Match
+%: {source-file} = $(if $(wildcard $@$(CXX_FILE_SUFFIX)),$@$(CXX_FILE_SUFFIX))
 %: {object-file} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$({source-file})))
 %: {link-parts} = $(if $(findstring $({object-file}),$({object-files})),,$({source-file})) $({object-files})
 %: $$({source-file}) $$({object-files}) $$(MAKEFILE_LIST) | $$({target-build-dir})
@@ -38,15 +41,17 @@ include $(ROOT)/makefile.generic/common.defs
 	$(LINK.cc) $(LDSTATIC) $({link-parts}) $(LDLIBS)  -o $(call !!,$({ld-out}))
 
 
-# default build subdirectory
+# build subdirectory
+# {target-build-dir} is supposed to be the same as {build-dir}
 $({build-dir})/:
 	mkdir -p $@
 # if {target-build-dir} is not the same as {build-dir}, it is supposed to be under {build-dir}
+# but in this case make prefers the implicit rule to build the main goal
 $({build-dir})/%:
 	mkdir -p $@
 
 
-# warning on fallback to the predefined implicit rules (if target file does not exist yet)
+# warning on fall back to the predefined implicit rules (if target file does not exist yet)
 %: %$(CXX_FILE_SUFFIX) ; $(warning Implicit rule ($@: $^) discarded.)
 
 

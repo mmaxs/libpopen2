@@ -55,7 +55,7 @@ ifneq ($({object-files}),)
 endif
 
 
-# warning on fallback to the predefined implicit rules (if target file does not exist yet)
+# warning on fall back to the predefined implicit rules (if target file does not exist yet)
 %: %$(CXX_FILE_SUFFIX) ; $(warning Implicit rule ($@: $^) discarded.)
 
 

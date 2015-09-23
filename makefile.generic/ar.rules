@@ -34,15 +34,17 @@ include $(ROOT)/makefile.generic/common.defs
 	$(AR) $(ARFLAGS) $(call !!,$(call _LIBS,lib%.a,$@)) $^
 
 
-# default build subdirectory
+# build subdirectory
+# {target-build-dir} is supposed to be the same as {build-dir}
 $({build-dir})/:
 	mkdir -p $@
 # if {target-build-dir} is not the same as {build-dir}, it is supposed to be under {build-dir}
+# but in this case make prefers the implicit rule to build the main goal
 $({build-dir})/%:
 	mkdir -p $@
 
 
-# warning on fallback to the predefined implicit rules (if target file does not exist yet)
+# warning on fall back to the predefined implicit rules (if target file does not exist yet)
 (%): % ; $(warning Implicit rule ($@: $^) discarded.)
 
 
