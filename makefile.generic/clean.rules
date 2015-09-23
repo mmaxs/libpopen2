@@ -14,10 +14,21 @@ include $(ROOT)/makefile.generic/common.defs
 .DEFAULT_GOAL = .
 
 
+{build-dir} = $(call !!,$(CURDIR))
+
+
+ifneq ($(filter $(abspath $(BUILD_ROOT))/%,$({build-dir})/),)
+
 .PHONY: clean
 clean:
 	$(info $. *** ($@: $^))
-	rm -rf $(call !!,$(CURDIR))/*
+	rm -rf $({build-dir})/*
+
+else
+
+$(warning 'clean' rule for the path ($({build-dir})) being not under the BUILD_ROOT=($(BUILD_ROOT)) discarded.)
+
+endif
 
 
 # reject all other goals
