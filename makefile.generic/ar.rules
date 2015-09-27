@@ -18,7 +18,7 @@ include $(ROOT)/makefile.generic/common.defs
 {object-files} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$(SOURCES)))
 
 
-# build subdirectory being supposed
+# build subdirectory being supposed for the main goal
 {build-dir} = $(call !!,$(CURDIR))
 
 
@@ -34,12 +34,14 @@ include $(ROOT)/makefile.generic/common.defs
 	$(AR) $(ARFLAGS) $(call !!,$(call _LIBS,lib%.a,$@)) $^
 
 
-# build subdirectory
-# {target-build-dir} is supposed to be the same as {build-dir}
+# create the subdirectory that should appears as a prerequisite
+# of the main goal where its rules are supposed output to
+# i.e. {target-build-dir} is supposed to be the same as {build-dir}
 $({build-dir})/:
 	mkdir -p $@
-# if {target-build-dir} is not the same as {build-dir}, it is supposed to be under {build-dir}
-# but in this case make prefers the implicit rule to build the main goal
+# if it is not the case, {target-build-dir} is supposed to be under {build-dir}
+# but under these circumstances make prefers its predefined implicit pattern rule
+# to the main goal's pattern, so the next rule is only for being dummy
 $({build-dir})/%:
 	mkdir -p $@
 
