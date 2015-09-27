@@ -51,7 +51,7 @@ export
 
 
 # no default goal
-.DEFAULT_GOAL = .
+.DEFAULT_GOAL = $@
 
 
 # project goals

@@ -8,11 +8,11 @@ export
 
 
 # no default goal
-.DEFAULT_GOAL = .
+.DEFAULT_GOAL = $@
 
 
 # pattern rules should contain recipes to not to be ignored by make
-# as a user redifinition of the built-in rules to cancel them;
+# as a user redefinition of the built-in rules to cancel them;
 # therefore we duplicate the commands from the generic rule here
 hello% example%: $(libpopen2)
 	# use generic rules for compiling and linking

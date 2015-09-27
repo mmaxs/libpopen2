@@ -8,7 +8,7 @@ export
 
 
 # no default goal
-.DEFAULT_GOAL = .
+.DEFAULT_GOAL = $@
 
 
 # use generic rules for 'clean'

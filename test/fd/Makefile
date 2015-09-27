@@ -56,7 +56,7 @@ export
 
 
 # no default goal
-.DEFAULT_GOAL = .
+.DEFAULT_GOAL = $@
 
 
 # pattern rules should contain recipes to not to be ignored by make
