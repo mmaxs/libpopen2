@@ -28,7 +28,7 @@ include $(ROOT)/makefile.generic/common.defs
 
 
 # rules to create/update an archive
-%: {target-build-dir} = $(call !,$@)
+%: private {target-build-dir} = $(call !,$@)
 %: $$({object-files}) | $$({target-build-dir})
 	$(info $. *** ($@: $^))
 	$(AR) $(ARFLAGS) $(call !!,$(call _LIBS,lib%.a,$@)) $^

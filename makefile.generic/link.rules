@@ -29,13 +29,13 @@ include $(ROOT)/makefile.generic/common.defs
 
 # rules for linking and producing an executable or a shared library
 {ld-out} ?= $(if $(LDOUT),$(LDOUT),$@)
-%: {target-build-dir} = $(call !,$({ld-out}))
+%: private {target-build-dir} = $(call !,$({ld-out}))
 # using $@ instead of $* yields a more predictable result
 # as far as make's pattern matching is not obvious
 # http://www.gnu.org/software/make/manual/make.html#Pattern-Match
-%: {source-file} = $(if $(wildcard $@$(CXX_FILE_SUFFIX)),$@$(CXX_FILE_SUFFIX))
-%: {object-file} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$({source-file})))
-%: {link-parts} = $(if $(findstring $({object-file}),$({object-files})),,$({source-file})) $({object-files})
+%: private {source-file} = $(if $(wildcard $@$(CXX_FILE_SUFFIX)),$@$(CXX_FILE_SUFFIX))
+%: private {object-file} = $(call !!,$(call _OBJS,$(CXX_FILE_SUFFIX),$({source-file})))
+%: private {link-parts} = $(if $(findstring $({object-file}),$({object-files})),,$({source-file})) $({object-files})
 %: $$({source-file}) $$({object-files}) $$(MAKEFILE_LIST) | $$({target-build-dir})
 	$(info $. *** ($@: $^))
 	$(LINK.cc) $(LDSTATIC) $({link-parts}) $(LDLIBS)  -o $(call !!,$({ld-out}))

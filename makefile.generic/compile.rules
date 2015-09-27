@@ -40,10 +40,10 @@ $(eval $({object-dependencies}))
 
 # ... and rules for compiling
 $({object-files}): $(MAKEFILE_LIST)
-$({object-files}): compile-parts = $(filter-out %$(CXX_HEADER_SUFFIX) $(MAKEFILE_LIST),$^)
+$({object-files}): private {compile-parts} = $(filter-out %$(CXX_HEADER_SUFFIX) $(MAKEFILE_LIST),$^)
 $({object-files}):
 	$(info $. *** ($@: $^))
-	$(COMPILE.cc) $(CXXSTD) $(IFLAGS) $(compile-parts)  -o $@
+	$(COMPILE.cc) $(CXXSTD) $(IFLAGS) $({compile-parts})  -o $@
 
 
 endif
