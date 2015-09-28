@@ -19,7 +19,9 @@ pid_t popen2(const char *_file, const char *_argv[],
 
     launches a child process by forking and executing the _file with command
     line parameter list _argv[], opens the pipes to child's process stdin and
-    from its stdout;
+    from its stdout; child's stdin can be written into through the file
+    descriptor returned in *_wr, and child's stdout can be read from through
+    the file descriptor returned in *_rd;
 
 pid_t popen2i(const char *_file, const char *_argv[],
               const int _in, int *_rd,
@@ -28,7 +30,8 @@ pid_t popen2i(const char *_file, const char *_argv[],
     launches a child process by forking and executing the _file with command
     line parameter list _argv[], duplicates the file descriptor referring by
     the number _in to child's process stdin, opens the pipe from child's
-    process stdout;
+    process stdout, which can be read from through the file descriptor returned
+    in *_rd;
 
 pid_t popen2o(const char *_file, const char *_argv[],
               const int _out, int *_wr,
@@ -37,7 +40,8 @@ pid_t popen2o(const char *_file, const char *_argv[],
     launches a child process by forking and executing the _file with command
     line parameter list _argv[], duplicates the file descriptor referring by
     the number _out to child's process stdout, opens the pipe to child's
-    process stdin;
+    process stdin, which can be written into through the file descriptor
+    returned in *_wr;
 
 pid_t popen2io(const char *_file, const char *_argv[],
                const int _in, const int _out);
@@ -53,7 +57,7 @@ created pipes. On success the PID of the created child process is returned.
 On failure, -1 is returned to the caller, no child process is created, errno is
 set to indicate the cause of the error.
 
-See the library header file src/include/popen2.h for more information.
+SEE THE LIBRARY HEADER FILE src/include/popen2.h FOR MORE INFORMATION. 
 
 
 USAGE EXAMPLES
