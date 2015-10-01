@@ -13,9 +13,9 @@
 #include <new>
 
 
-/* a small class wrapping the most frequent operations with file descriptors
-   that makes client code to be a bit more clean and straightforward; class
-   size is equal to sizeof(int) and its instances are interchangeable with file
+/* the class wrapping the most frequent operations with file descriptors that
+   makes client code to be a bit more clean and straightforward; class size is
+   equal to sizeof(int) and its instances are interchangeable with file
    descriptor POD-values for most use cases */
 class fd
 {
@@ -23,8 +23,8 @@ private:
   int n_ = -1;
 
 public:
-  operator int& ()  { static_assert(sizeof(*this) == sizeof(n_), "");  return n_; }
-  operator int () const  { static_assert(sizeof(*this) == sizeof(n_), "");  return n_; }
+  operator       int& ()        { return n_; }
+  operator const int& () const  { return n_; }  // e.g. casting <const fd> to <int>
 
 public:
   ~fd() = default;
@@ -50,8 +50,9 @@ public:
 
 public:
   /* check if the fd variable has a valid and open file descriptor number */
-  /* const specifier is very important here or else in some cases 'operator int () const' can be used instead */
   explicit operator bool () const  { return ::fcntl(n_, F_GETFD) != -1; }
+  /* const specifier is important here or else in some cases 'operator const int& () const' can be used instead */
+
 
 public:
   /* invalidate fd variable */
