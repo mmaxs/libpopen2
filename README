@@ -154,3 +154,7 @@ derived from the make goal name.
 Library header files are located in
     src/include/
 
+
+--
+Copyright (c) 2015 Mikhail Usenko <michaelus@tochka.ru>. All rights reserved.
+GNU General Public License.
