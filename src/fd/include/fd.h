@@ -29,11 +29,11 @@ public:
 public:
   ~fd() = default;
 
-  fd() = default;
+  constexpr fd() = default;
 
-  fd(const int _n) : n_(_n)  {}
+  constexpr fd(const int _n) : n_(_n)  {}
 
-  fd(const fd &_fd) : n_(_fd.n_)  {}
+  constexpr fd(const fd &_fd) : n_(_fd.n_)  {}
 
 public:
   fd& operator = (const fd &_fd)
@@ -146,7 +146,7 @@ public:
             for (char c; *s; ++s)
             {
               c = *s - '0';
-              if ((c < 0) || (9 < c))  break;
+              if (c < 0 or 9 < c)  break;
               fd = 10*fd + c;
             };
             if (*s)  continue;
