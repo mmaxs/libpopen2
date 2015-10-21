@@ -52,10 +52,11 @@ pid_t popen2io(const char *_file, const char *_argv[],
 
 All the functions use execvp(3) to replace the forked child process image with
 the new process image constructed from the _file launched with argument list
-_argv[]. The flags specified by _oflags described in pipe(2) can be set for
-created pipes. On success the PID of the created child process is returned.
-On failure, -1 is returned to the caller, no child process is created, errno is
-set to indicate the cause of the error.
+_argv[]. The flags described in pipe2(2) (O_CLOEXEC, O_NONBLOCK, O_DIRECT) can
+be set for created pipes by specifying the _oflags parameter. On success the
+PID of the created child process is returned.  On failure, -1 is returned to
+the caller, no child process is created, errno is set to indicate the cause of
+the error.
 
 SEE THE LIBRARY HEADER FILE src/include/popen2.h FOR MORE INFORMATION. 
 
