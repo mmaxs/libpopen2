@@ -14,7 +14,7 @@ pid_t popen2(const char *_file, const char *_argv[], int *_rd, int *_wr, const i
   struct pipe_fd {
     // fd d[2] = { -1, -1 }, &rd = d[0], &wr = d[1];
     fd rd = -1, wr = -1;
-    operator int* ()  { static_assert(sizeof(fd) == sizeof(int), ""); return (int*)&rd; }
+    operator int* ()  { static_assert(sizeof(*this) == sizeof(int[2]), ""); return (int*)&rd; }
     void close()  { rd.close(); wr.close(); }
   } downstream, upstream, child_status;
 
@@ -76,7 +76,7 @@ pid_t popen2i(const char *_file, const char *_argv[], const int _in, int *_rd, c
   struct pipe_fd {
     // fd d[2] = { -1, -1 }, &rd = d[0], &wr = d[1];
     fd rd = -1, wr = -1;
-    operator int* ()  { static_assert(sizeof(fd) == sizeof(int), ""); return (int*)&rd; }
+    operator int* ()  { static_assert(sizeof(*this) == sizeof(int[2]), ""); return (int*)&rd; }
     void close()  { rd.close(); wr.close(); }
   } downstream, child_status;
 
@@ -138,7 +138,7 @@ pid_t popen2o(const char *_file, const char *_argv[], const int _out, int *_wr, 
   struct pipe_fd {
     // fd d[2] = { -1, -1 }, &rd = d[0], &wr = d[1];
     fd rd = -1, wr = -1;
-    operator int* ()  { static_assert(sizeof(fd) == sizeof(int), ""); return (int*)&rd; }
+    operator int* ()  { static_assert(sizeof(*this) == sizeof(int[2]), ""); return (int*)&rd; }
     void close()  { rd.close(); wr.close(); }
   } upstream, child_status;
 
@@ -200,7 +200,7 @@ pid_t popen2io(const char *_file, const char *_argv[], const int _in, const int 
   struct pipe_fd {
     // fd d[2] = { -1, -1 }, &rd = d[0], &wr = d[1];
     fd rd = -1, wr = -1;
-    operator int* ()  { static_assert(sizeof(fd) == sizeof(int), ""); return (int*)&rd; }
+    operator int* ()  { static_assert(sizeof(*this) == sizeof(int[2]), ""); return (int*)&rd; }
     void close()  { rd.close(); wr.close(); }
   } child_status;
 
