@@ -93,9 +93,10 @@ public:
   }
 
   /* duplicate file descriptor to the specified number, closing the target
-     file descriptor number first if necessary; set fd variable to the target
-     file descriptor number, closing the old file descriptor number first;
-     optionally set file descriptor flags for the new file descriptor number */
+     file descriptor number first if necessary; set *this fd variable to the
+     target file descriptor number, closing the old file descriptor number
+     first; optionally set file descriptor flags for the new file descriptor
+     number */
   int mov2(const int _n, const int _F_SETFD = -1)
   {
     int o = -1;
